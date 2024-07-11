@@ -23,6 +23,41 @@
 <script>
 export default {
     data() {
+    return {
+      email: '',
+      password: '',
+      errorMessage: ''
+    };
+  },
+  methods: {
+    async login() {
+      const success = await this.$store.dispatch('login', {
+        email: this.email,
+        password: this.password
+      });
+
+      if (success) {
+        alert(`Bienvenido ${this.$store.getters.currentUser.name}`);
+        this.$router.push('/inicio');
+      } else {
+        this.errorMessage = 'Usuario y/o contraseña incorrectos!';
+      }
+    }
+  }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /*data() {
         return {
             email: '',
             password: '',
@@ -39,7 +74,7 @@ export default {
                 if (validUser) {
                     alert(`Bienvenido ${validUser.name}`);
                     localStorage.setItem('login_success', JSON.stringify(validUser));
-                    this.$router.push('/');
+                    this.$router.push('/inicio');
                 } else {
                     this.errorMessage = 'Usuario y/o contraseña incorrectos!';
                 }
@@ -48,7 +83,7 @@ export default {
                 this.errorMessage = 'Ocurrió un error. Por favor, intente de nuevo.';
             }
         }
-    }
+    }*/
 }
 </script>
   

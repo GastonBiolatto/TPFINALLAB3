@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import RegistroView from '../views/RegistroView.vue'
+import InicioView from '../views/InicioView.vue'
 
 Vue.use(VueRouter)
 
@@ -23,14 +24,9 @@ const routes = [
     component: RegistroView  
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: function () {
-      return import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-    }
+    path: '/inicio',
+    name: 'Inicio',
+    component: InicioView
   }
 ]
 
