@@ -3,11 +3,7 @@
         <div>
             <nav class="navbar navbar-expand-lg bg-body-tertiary">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="/">
-                        <img src="../assets/prueba.png" alt="Logo" width="30" height="24"
-                            class="d-inline-block align-text-top">
-                        Nombre
-                    </a>
+                    <a class="navbar-brand" href="/"><i class="fas fa-home"></i></a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
