@@ -29,25 +29,25 @@
                 <div class="d-flex gap-4 ">
                     <ul class="list-group d-flex list-group-flush">
                         <li class="list-group-item">
-                            <router-link v-if="isLoggedIn" to="/inicio" class="d-flex align-items-center p-3">
+                            <router-link to="/inicio" class="d-flex align-items-center p-3">
                                 <i class="fas fa-home"></i>
                                 <span class="ms-3 d-none d-sm-flex">Inicio</span>
                             </router-link>
                         </li>
                         <li class="list-group-item">
-                            <router-link v-if="isLoggedIn" to="/compra" class="d-flex align-items-center p-3">
+                            <router-link to="/compra" class="d-flex align-items-center p-3">
                                 <i class="fas fa-home"></i>
                                 <span class="ms-3 d-none d-sm-flex">Compra</span>
                             </router-link>
                         </li>
                         <li class="list-group-item">
-                            <router-link v-if="isLoggedIn" to="/venta" class="d-flex align-items-center p-3">
+                            <router-link to="/venta" class="d-flex align-items-center p-3">
                                 <i class="fas fa-home"></i>
                                 <span class="ms-3 d-none d-sm-flex">Venta</span>
                             </router-link>
                         </li>
                         <li class="list-group-item">
-                            <router-link v-if="isLoggedIn" to="/historial" class="d-flex align-items-center p-3">
+                            <router-link to="/historial" class="d-flex align-items-center p-3">
                                 <i class="fas fa-home"></i>
                                 <span class="ms-3 d-none d-sm-flex">Historial</span>
                             </router-link>
@@ -56,8 +56,37 @@
                 </div>
             </div>
             <div class="col-10 d-flex align-items-center justify-content-center">
-                <h1>{{ currentUser.id }}</h1>
-
+                
+                <h1>hola {{ currentUser.name }}</h1>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">First</th>
+                            <th scope="col">Last</th>
+                            <th scope="col">Handle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Mark</td>
+                            <td>Otto</td>
+                            <td>@mdo</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Jacob</td>
+                            <td>Thornton</td>
+                            <td>@fat</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">3</th>
+                            <td colspan="2">Larry the Bird</td>
+                            <td>@twitter</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -68,11 +97,7 @@ export default {
     computed: {
         currentUser() {
             return this.$store.getters.currentUser;
-        },
-        isLoggedIn() {
-      // Aquí puedes ajustar la lógica según cómo verificas la autenticación en tu aplicación
-      return !!localStorage.getItem('login_success'); // Devuelve true si hay un usuario autenticado
-    }
+        }
     },
     methods: {
         logout() {

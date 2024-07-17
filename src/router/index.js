@@ -29,26 +29,22 @@ const routes = [
   {
     path: '/inicio',
     name: 'Inicio',
-    component: InicioView,
-    meta: { requiresAuth: true }
+    component: InicioView
   },
   {
     path: '/historial',
     name: 'Historial',
-    component: HistorialView,
-    meta: { requiresAuth: true }
+    component: HistorialView
   },
   {
     path: '/compra',
     name: 'Compra',
-    component: CompraView,
-    meta: { requiresAuth: true }
+    component: CompraView
   },
   {
     path: '/venta',
     name: 'Venta',
-    component: VentaView,
-    meta: { requiresAuth: true }
+    component: VentaView
   },
 ]
 
@@ -58,17 +54,4 @@ const router = new VueRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
-  const isAuthenticated = !!localStorage.getItem('login_success');
-
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!isAuthenticated) {
-      next('/login'); // Redirige a la página de login si no está autenticado
-    } else {
-      next(); // Continúa navegando a la ruta protegida
-    }
-  } else {
-    next(); // Continúa navegando en cualquier otro caso
-  }
-});
 export default router

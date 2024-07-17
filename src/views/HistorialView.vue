@@ -29,25 +29,25 @@
                 <div class="d-flex gap-4 ">
                     <ul class="list-group d-flex list-group-flush">
                         <li class="list-group-item">
-                            <router-link v-if="isLoggedIn" to="/inicio" class="d-flex align-items-center p-3">
+                            <router-link  to="/inicio" class="d-flex align-items-center p-3">
                                 <i class="fas fa-home"></i>
                                 <span class="ms-3 d-none d-sm-flex">Inicio</span>
                             </router-link>
                         </li>
                         <li class="list-group-item">
-                            <router-link v-if="isLoggedIn" to="/compra" class="d-flex align-items-center p-3">
+                            <router-link  to="/compra" class="d-flex align-items-center p-3">
                                 <i class="fas fa-home"></i>
                                 <span class="ms-3 d-none d-sm-flex">Compra</span>
                             </router-link>
                         </li>
                         <li class="list-group-item">
-                            <router-link v-if="isLoggedIn" to="/venta" class="d-flex align-items-center p-3">
+                            <router-link  to="/venta" class="d-flex align-items-center p-3">
                                 <i class="fas fa-home"></i>
                                 <span class="ms-3 d-none d-sm-flex">Venta</span>
                             </router-link>
                         </li>
                         <li class="list-group-item">
-                            <router-link v-if="isLoggedIn" to="/historial" class="d-flex align-items-center p-3">
+                            <router-link  to="/historial" class="d-flex align-items-center p-3">
                                 <i class="fas fa-home"></i>
                                 <span class="ms-3 d-none d-sm-flex">Historial</span>
                             </router-link>
@@ -69,10 +69,6 @@ export default {
         currentUser() {
             return this.$store.getters.currentUser;
         },
-        isLoggedIn() {
-      // Aquí puedes ajustar la lógica según cómo verificas la autenticación en tu aplicación
-      return !!localStorage.getItem('login_success'); // Devuelve true si hay un usuario autenticado
-    }
     },
     methods: {
         logout() {

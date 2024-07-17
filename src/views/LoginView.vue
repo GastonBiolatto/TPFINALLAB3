@@ -24,11 +24,11 @@
                     <form @submit.prevent="login">
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input v-model="email" type="email" class="form-control" id="email" required>
+                            <input v-model="email" type="email" class="form-control" placeholder="..." id="email" required>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
-                            <input v-model="password" type="password" class="form-control" id="password" required>
+                            <input v-model="password" type="password" class="form-control" placeholder="..." id="password" required>
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Login</button>
                         <p v-if="errorMessage" class="text-danger mt-3">{{ errorMessage }}</p>
