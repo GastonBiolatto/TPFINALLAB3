@@ -79,7 +79,6 @@ export default {
       if (isUserRegistered) {
         return alert('El usuario ya está registrado!');
       }
-
       const userId = this.generateId(8);
       users.push({ id: userId, name, email, password });
       localStorage.setItem('users', JSON.stringify(users));
@@ -90,7 +89,6 @@ export default {
 };
 </script>
   
-<style scoped>
-/* Estilos personalizados si es necesario */
+<style >
 </style>
   

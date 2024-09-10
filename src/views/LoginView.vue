@@ -60,6 +60,15 @@ export default {
             });
 
             if (success) {
+                const correntUser = this.$store.getters.currentUser;
+
+                const userId = correntUser.id;
+                let wallet = localStorage.getItem(userId);
+
+                if (!wallet) {
+                    localStorage.setItem(userId, JSON.stringify({ARS:0}));
+                }
+                
                 alert(`Bienvenido ${this.$store.getters.currentUser.name}`);
                 this.$router.push('/inicio');
             } else {

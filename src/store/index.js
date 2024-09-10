@@ -5,7 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    user: null
+    user: JSON.parse(localStorage.getItem('login_success')) || null,
   },
   getters: {
     isAuthenticated(state) {
@@ -21,7 +21,8 @@ export default new Vuex.Store({
     },
     logout(state) {
       state.user = null;
-    }
+    },
+    
   },
   actions: {
     login({ commit }, { email, password }) {
@@ -30,7 +31,7 @@ export default new Vuex.Store({
         const validUser = users.find(user => user.email === email && user.password === password);
 
         if (validUser) {
-          localStorage.setItem('login_success', JSON.stringify(validUser));
+          // No es necesario establecer un nuevo ítem en local storage
           commit('setUser', validUser);
           return true;
         } else {
@@ -42,10 +43,9 @@ export default new Vuex.Store({
       }
     },
     logout({ commit }) {
-      localStorage.removeItem('login_success');
       commit('logout');
-    }
+    },
   },
   modules: {
   }
-})
+});

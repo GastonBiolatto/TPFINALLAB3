@@ -29,19 +29,19 @@
                 <div class="d-flex gap-4 ">
                     <ul class="list-group d-flex list-group-flush">
                         <li class="list-group-item">
-                            <router-link  to="/inicio" class="d-flex align-items-center p-3">
+                            <router-link to="/inicio" class="d-flex align-items-center p-3">
                                 <i class="fas fa-home"></i>
                                 <span class="ms-3 d-none d-sm-flex">Inicio</span>
                             </router-link>
                         </li>
                         <li class="list-group-item">
-                            <router-link  to="/compra" class="d-flex align-items-center p-3">
+                            <router-link to="/compra" class="d-flex align-items-center p-3">
                                 <i class="fas fa-home"></i>
                                 <span class="ms-3 d-none d-sm-flex">Compra</span>
                             </router-link>
                         </li>
                         <li class="list-group-item">
-                            <router-link  to="/venta" class="d-flex align-items-center p-3">
+                            <router-link to="/venta" class="d-flex align-items-center p-3">
                                 <i class="fas fa-home"></i>
                                 <span class="ms-3 d-none d-sm-flex">Venta</span>
                             </router-link>
@@ -55,10 +55,30 @@
                     </ul>
                 </div>
             </div>
-            <div class="col-10 d-flex align-items-center justify-content-center">
-                <h1>{{ currentUser.id }}</h1>
+            <div class="col-10 d-flex justify-content-center align-items-center ">
+                <div class="card " style="width: 18rem">
+                    <svg class="bd-placeholder-img card-img-top" width="100%" height="180"
+                        xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Image cap"
+                        preserveAspectRatio="xMidYMid slice" focusable="false">
+                        <title>Placeholder</title>
+                        <rect width="100%" height="100%" fill="#868e96"></rect>
+                        <text x="50%" y="50%" fill="#dee2e6" dy=".3em">Image cap</text>
+                    </svg>
+                    <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <p class="card-text">
+                            Some quick example text to build on the card title and make up the
+                            bulk of the card's content.
+                        </p>
+                        <div class="d-flex">
+                            <a href="#" class="btn btn-primary me-2">Go somewhere</a>
+                            <a href="#" class="btn btn-primary">Go somewhere</a>
+                        </div>
+                    </div>
+                </div>
 
             </div>
+
         </div>
     </div>
 </template>

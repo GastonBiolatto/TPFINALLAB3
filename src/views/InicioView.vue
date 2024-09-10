@@ -17,8 +17,12 @@
                                 </li>
                             </ul>
                             <form class="d-flex">
-                                <a class="btn " role="button" @click="logout">Cerrar sesión</a>
+                                <p >posee $ {{ monedero.ARS }}</p>
+                                <a class="btn " role="button" @click="agregaArs">agregar ars</a>
                             </form>
+                            <button type="button" class="d-flex btn btn-outline-danger" @click="logout">Cerrar sesión</button>
+                           
+                           
                         </div>
                     </div>
                 </nav>
@@ -52,19 +56,18 @@
                                 <span class="ms-3 d-none d-sm-flex">Historial</span>
                             </router-link>
                         </li>
+                        
                     </ul>
                 </div>
             </div>
             <div class="col-10 d-flex align-items-center justify-content-center">
-                
-                <h1>hola {{ currentUser.name }}</h1>
                 <table class="table">
                     <thead>
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">First</th>
-                            <th scope="col">Last</th>
-                            <th scope="col">Handle</th>
+                            <th scope="col">Codigo</th>
+                            <th scope="col">Cripto</th>
+                            <th scope="col">Cantidad</th>
+                            <th scope="col">valor en pesos</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -87,26 +90,70 @@
                         </tr>
                     </tbody>
                 </table>
+
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import axios from "axios";
 export default {
+    data() {
+        return {
+            events: [],
+            usuario: null
+        }
+    },
+
     computed: {
         currentUser() {
             return this.$store.getters.currentUser;
+        },
+        monedero() {
+            const currentUser = this.currentUser;
+            const userId = currentUser.id;
+            let monedero = localStorage.getItem(userId);
+            monedero = JSON.parse(monedero);
+            return monedero;
+        }
+
+    },
+    watch: {
+        currentUser: {
+            handler(newUser) {
+                this.usuario = newUser;
+            },
+            immediate: true
         }
     },
     methods: {
         logout() {
             this.$store.dispatch('logout');
             this.$router.push('/login');
+        },
+        agregaArs() {
+            const currentUser = this.currentUser;
+            const userId = currentUser.id;
+            let monedero = localStorage.getItem(userId);
+            monedero = JSON.parse(monedero);
+            monedero.ARS += 100;
+
+            localStorage.setItem(userId, JSON.stringify(monedero));
+
+        },
+
+    },
+    async created() {
+        try {
+            let response = await axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=ars');
+            this.events = response.data;
+        } catch (error) {
+            console.error('Error fetching cryptocurrency data:', error);
         }
     }
-};
 
+}
 </script>
 
 <style>
