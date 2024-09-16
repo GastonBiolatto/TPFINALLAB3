@@ -55,28 +55,52 @@
                     </ul>
                 </div>
             </div>
-            <div class="col-10 d-flex justify-content-center align-items-center ">
-                <div class="card " style="width: 18rem">
-                    <svg class="bd-placeholder-img card-img-top" width="100%" height="180"
-                        xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Image cap"
-                        preserveAspectRatio="xMidYMid slice" focusable="false">
-                        <title>Placeholder</title>
-                        <rect width="100%" height="100%" fill="#868e96"></rect>
-                        <text x="50%" y="50%" fill="#dee2e6" dy=".3em">Image cap</text>
-                    </svg>
+            <div class="col-6 d-flex justify-content-center align-items-center ">
+                <div class="table-responsive" style="height: 600px; overflow-y: auto;">
+                    <table class="table table-striped table-hover table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Logo</th>
+                                <th>Moneda</th>
+                                <th>Simbolo</th>
+                                <th>Precion (ars)</th>
+                                <th>Elegir</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="coin in coins" :key="coin.id">
+                                <td>
+                                    <img :src="coin.image" alt="coin image" width="30" height="30">
+                                </td>
+                                <td>{{ coin.name }}</td>
+                                <td>{{ coin.symbol }}</td>
+                                <td>{{ coin.current_price }}</td>
+                                <td><button class="btn btn-sm btn-primary"
+                                        @click="seleccionarMoneda(coin)">seleccionar</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-4 d-flex justify-content-center align-items-center">
+                <div class="card" style="width: 18rem" v-if="monedaSeleccionada">
+                    <img :src="monedaSeleccionada.image" alt="coin image" class="card-img-top">
                     <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
+                        <h5 class="card-title">{{ monedaSeleccionada.name }}</h5>
                         <p class="card-text">
-                            Some quick example text to build on the card title and make up the
-                            bulk of the card's content.
+                            Simbolo: {{ monedaSeleccionada.symbol }} <br>
+                            Precio: {{ monedaSeleccionada.current_price }} ARS
                         </p>
-                        <div class="d-flex">
-                            <a href="#" class="btn btn-primary me-2">Go somewhere</a>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
+                        <div class="mb-3">
+                            <label for="cantidad" class="form-label">Cantidad</label>
+                            <input type="number" class="form-control" id="cantidad" v-model.number="cantidad">
                         </div>
+                        <button class="btn btn-success" @click="comprarMoneda">Comprar</button>
                     </div>
                 </div>
-
+                <div v-else>
+                    <p>Selecciona una moneda para ver los detalles aquí</p>
+                </div>
             </div>
 
         </div>
@@ -84,20 +108,87 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
+    data() {
+        return {
+            coins: [],
+            monedaSeleccionada: null,
+            cantidad: 0,
+        }
+    },
     computed: {
         currentUser() {
             return this.$store.getters.currentUser;
         },
+
+    },
+    mounted() {
+        this.cargarDatos();
     },
 
     methods: {
         logout() {
             this.$store.dispatch('logout');
             this.$router.push('/login');
+        },
+        async cargarDatos() {
+            try {
+                const response = await axios.get("https://api.coingecko.com/api/v3/coins/markets?vs_currency=ars");
+                this.coins = response.data;
+            } catch (error) {
+                console.error('Error al obtener los datos de CoinGecko:', error);
+            }
+        },
+        seleccionarMoneda(coin) {
+            this.monedaSeleccionada = coin;
+            this.cantidad = 0;
+        },
+        async comprarMoneda() {
+        const currentUser = this.currentUser;
+        const userId = currentUser.id;
+        let monedero = localStorage.getItem(userId);
+
+        if (!monedero) {
+            return alert('No se encontró información del usuario.');
         }
+
+        monedero = JSON.parse(monedero);
+
+        const totalPrice = this.monedaSeleccionada.current_price * this.cantidad;
+
+        if (totalPrice > monedero.ARS) {
+            return alert('Saldo insuficiente para la compra.');
+        }
+
+        // Actualizar el saldo en el localStorage
+        monedero.ARS -= totalPrice;
+
+        // Verificar si el objeto de monedas ya existe en el localStorage
+        if (!monedero.monedas) {
+            monedero.monedas = {};
+        }
+
+        // Agregar o actualizar la moneda en el objeto del localStorage
+        if (monedero.monedas[this.monedaSeleccionada.id]) {
+            monedero.monedas[this.monedaSeleccionada.id] += this.cantidad;
+        } else {
+            monedero.monedas[this.monedaSeleccionada.id] = this.cantidad;
+        }
+
+        // Guardar el objeto modificado en el localStorage
+        localStorage.setItem(userId, JSON.stringify(monedero));
+
+        // Resetear selección
+        this.monedaSeleccionada = null;
+        this.cantidad = 0;
+
+        alert('Compra realizada con éxito!');
+    },
     }
 };
+
+
 
 </script>
 
