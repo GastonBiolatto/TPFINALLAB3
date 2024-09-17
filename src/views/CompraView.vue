@@ -55,8 +55,10 @@
                     </ul>
                 </div>
             </div>
-            <div class="col-6 d-flex justify-content-center align-items-center ">
-                <div class="table-responsive" style="height: 600px; overflow-y: auto;">
+            <div class="col-7 d-flex justify-content-center align-items-center ">
+                <div class="table-responsive" style="height: 550px; overflow-y: auto;">
+                    <input type="text" class="form-control my-input bg-dark text-light rounded-0 border-0 my-4"
+                        placeholder="Buscar moneda" @keyup="buscarMoneda" v-model="textoBuscado">
                     <table class="table table-striped table-hover table-bordered">
                         <thead class="table-dark">
                             <tr>
@@ -82,7 +84,7 @@
                     </table>
                 </div>
             </div>
-            <div class="col-4 d-flex justify-content-center align-items-center">
+            <div class="col-3 d-flex justify-content-center align-items-center">
                 <div class="card" style="width: 18rem" v-if="monedaSeleccionada">
                     <img :src="monedaSeleccionada.image" alt="coin image" class="card-img-top">
                     <div class="card-body">
@@ -115,6 +117,7 @@ export default {
             coins: [],
             monedaSeleccionada: null,
             cantidad: 0,
+            textoBuscado: "",
         }
     },
     computed: {
@@ -145,59 +148,66 @@ export default {
             this.cantidad = 0;
         },
         async comprarMoneda() {
-        const currentUser = this.currentUser;
-        const userId = currentUser.id;
-        let monedero = localStorage.getItem(userId);
+            const currentUser = this.currentUser;
+            const userId = currentUser.id;
+            let monedero = localStorage.getItem(userId);
 
-        if (!monedero) {
-            return alert('No se encontró información del usuario.');
+            if (!monedero) {
+                return alert('No se encontró información del usuario.');
+            }
+
+            monedero = JSON.parse(monedero);
+
+            const totalPrice = this.monedaSeleccionada.current_price * this.cantidad;
+
+            if (totalPrice > monedero.ARS) {
+                return alert('Saldo insuficiente para la compra.');
+            }
+            monedero.ARS -= totalPrice;
+
+            if (!monedero.monedas) {
+                monedero.monedas = {};
+            }
+
+            if (monedero.monedas[this.monedaSeleccionada.id]) {
+                monedero.monedas[this.monedaSeleccionada.id] += this.cantidad;
+            } else {
+                monedero.monedas[this.monedaSeleccionada.id] = this.cantidad;
+            }
+
+            localStorage.setItem(userId, JSON.stringify(monedero));
+
+            this.monedaSeleccionada = null;
+            this.cantidad = 0;
+
+            alert('Compra realizada con éxito!');
+        },
+        buscarMoneda() {
+            if (this.textoBuscado.length > 0) {
+                this.coins = this.coins.filter(coin => coin.name.toLowerCase().includes(this.textoBuscado.toLowerCase()));
+            } else {
+                this.cargarDatos();
+            }
+
         }
-
-        monedero = JSON.parse(monedero);
-
-        const totalPrice = this.monedaSeleccionada.current_price * this.cantidad;
-
-        if (totalPrice > monedero.ARS) {
-            return alert('Saldo insuficiente para la compra.');
-        }
-
-        // Actualizar el saldo en el localStorage
-        monedero.ARS -= totalPrice;
-
-        // Verificar si el objeto de monedas ya existe en el localStorage
-        if (!monedero.monedas) {
-            monedero.monedas = {};
-        }
-
-        // Agregar o actualizar la moneda en el objeto del localStorage
-        if (monedero.monedas[this.monedaSeleccionada.id]) {
-            monedero.monedas[this.monedaSeleccionada.id] += this.cantidad;
-        } else {
-            monedero.monedas[this.monedaSeleccionada.id] = this.cantidad;
-        }
-
-        // Guardar el objeto modificado en el localStorage
-        localStorage.setItem(userId, JSON.stringify(monedero));
-
-        // Resetear selección
-        this.monedaSeleccionada = null;
-        this.cantidad = 0;
-
-        alert('Compra realizada con éxito!');
     },
-    }
-};
+}
+
 
 
 
 </script>
 
-<style>
+<style scoped>
 .full-screen-container {
     height: 100vh;
 }
 
 .todo-alto {
     height: 85%;
+}
+
+.my-input::placeholder {
+    color: white;
 }
 </style>
