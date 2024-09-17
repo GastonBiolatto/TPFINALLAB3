@@ -1,8 +1,8 @@
 <template>
     <div class="container-fluid bg-secondary-subtle full-screen-container">
         <div class="row">
-            <div class="col ">
-                <nav class="navbar navbar-expand-lg bg-body-tertiary ">
+            <div class="col">
+                <nav class="navbar navbar-expand-lg bg-body-tertiary">
                     <div class="container-fluid">
                         <a class="navbar-brand" href="/"><i class="fas fa-home"></i></a>
                         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -17,7 +17,7 @@
                                 </li>
                             </ul>
                             <form class="d-flex">
-                                <a class="btn " role="button" @click="logout">Cerrar sesión</a>
+                                <a class="btn" role="button" @click="logout">Cerrar sesión</a>
                             </form>
                         </div>
                     </div>
@@ -26,7 +26,7 @@
         </div>
         <div class="row todo-alto">
             <div class="col-2 d-flex align-items-center justify-content-center">
-                <div class="d-flex gap-4 ">
+                <div class="d-flex gap-4">
                     <ul class="list-group d-flex list-group-flush">
                         <li class="list-group-item">
                             <router-link to="/inicio" class="d-flex align-items-center p-3">
@@ -36,26 +36,26 @@
                         </li>
                         <li class="list-group-item">
                             <router-link to="/compra" class="d-flex align-items-center p-3">
-                                <i class="fas fa-home"></i>
+                                <i class="fas fa-shopping-cart"></i>
                                 <span class="ms-3 d-none d-sm-flex">Compra</span>
                             </router-link>
                         </li>
                         <li class="list-group-item">
                             <router-link to="/venta" class="d-flex align-items-center p-3">
-                                <i class="fas fa-home"></i>
+                                <i class="fas fa-exchange-alt"></i>
                                 <span class="ms-3 d-none d-sm-flex">Venta</span>
                             </router-link>
                         </li>
                         <li class="list-group-item">
                             <router-link to="/historial" class="d-flex align-items-center p-3">
-                                <i class="fas fa-home"></i>
+                                <i class="fas fa-history"></i>
                                 <span class="ms-3 d-none d-sm-flex">Historial</span>
                             </router-link>
                         </li>
                     </ul>
                 </div>
             </div>
-            <div class="col-7 d-flex justify-content-center align-items-center ">
+            <div class="col-7 d-flex justify-content-center align-items-center">
                 <div class="table-responsive" style="height: 550px; overflow-y: auto;">
                     <input type="text" class="form-control my-input bg-dark text-light rounded-0 border-0 my-4"
                         placeholder="Buscar moneda" @keyup="buscarMoneda" v-model="textoBuscado">
@@ -65,7 +65,7 @@
                                 <th>Logo</th>
                                 <th>Moneda</th>
                                 <th>Simbolo</th>
-                                <th>Precion (ars)</th>
+                                <th>Precio (ARS)</th>
                                 <th>Elegir</th>
                             </tr>
                         </thead>
@@ -78,7 +78,7 @@
                                 <td>{{ coin.symbol }}</td>
                                 <td>{{ coin.current_price }}</td>
                                 <td><button class="btn btn-sm btn-primary"
-                                        @click="seleccionarMoneda(coin)">seleccionar</button></td>
+                                        @click="seleccionarMoneda(coin)">Seleccionar</button></td>
                             </tr>
                         </tbody>
                     </table>
@@ -90,12 +90,12 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ monedaSeleccionada.name }}</h5>
                         <p class="card-text">
-                            Simbolo: {{ monedaSeleccionada.symbol }} <br>
+                            Símbolo: {{ monedaSeleccionada.symbol }} <br>
                             Precio: {{ monedaSeleccionada.current_price }} ARS
                         </p>
                         <div class="mb-3">
                             <label for="cantidad" class="form-label">Cantidad</label>
-                            <input type="number" class="form-control" id="cantidad" v-model.number="cantidad">
+                            <input type="number" class="form-control" id="cantidad" v-model.number="cantidad" min="0">
                         </div>
                         <button class="btn btn-success" @click="comprarMoneda">Comprar</button>
                     </div>
@@ -104,32 +104,30 @@
                     <p>Selecciona una moneda para ver los detalles aquí</p>
                 </div>
             </div>
-
         </div>
     </div>
 </template>
 
 <script>
 import axios from 'axios';
+
 export default {
     data() {
         return {
-            coins: [],
-            monedaSeleccionada: null,
-            cantidad: 0,
-            textoBuscado: "",
+            coins: [], 
+            monedaSeleccionada: null, 
+            cantidad: 0, 
+            textoBuscado: "" 
         }
     },
     computed: {
         currentUser() {
             return this.$store.getters.currentUser;
-        },
-
+        }
     },
     mounted() {
         this.cargarDatos();
     },
-
     methods: {
         logout() {
             this.$store.dispatch('logout');
@@ -145,7 +143,7 @@ export default {
         },
         seleccionarMoneda(coin) {
             this.monedaSeleccionada = coin;
-            this.cantidad = 0;
+            this.cantidad = 0; 
         },
         async comprarMoneda() {
             const currentUser = this.currentUser;
@@ -163,6 +161,7 @@ export default {
             if (totalPrice > monedero.ARS) {
                 return alert('Saldo insuficiente para la compra.');
             }
+
             monedero.ARS -= totalPrice;
 
             if (!monedero.monedas) {
@@ -186,16 +185,11 @@ export default {
             if (this.textoBuscado.length > 0) {
                 this.coins = this.coins.filter(coin => coin.name.toLowerCase().includes(this.textoBuscado.toLowerCase()));
             } else {
-                this.cargarDatos();
+                this.cargarDatos(); // Restaura la lista completa si el campo de búsqueda está vacío
             }
-
         }
-    },
+    }
 }
-
-
-
-
 </script>
 
 <style scoped>

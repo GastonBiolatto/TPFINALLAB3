@@ -56,7 +56,7 @@
                 </div>
             </div>
             <div class="col-10 d-flex align-items-center justify-content-center">
-                <h1>{{ currentUser.id }}</h1>
+                
 
             </div>
         </div>
@@ -69,6 +69,14 @@ export default {
         currentUser() {
             return this.$store.getters.currentUser;
         },
+    },
+    watch: {
+        currentUser: {
+            handler(newUser) {
+                this.usuario = newUser;
+            },
+            immediate: true
+        }
     },
     methods: {
         logout() {

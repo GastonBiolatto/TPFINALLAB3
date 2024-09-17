@@ -76,50 +76,10 @@ export default {
             }
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /*data() {
-        return {
-            email: '',
-            password: '',
-            errorMessage: ''
-        }
-    },
-    methods: {
-        login() {
-            try {
-                const users = JSON.parse(localStorage.getItem('users')) || [];
-
-                const validUser = users.find(users => users.email === this.email && users.password === this.password);
-
-                if (validUser) {
-                    alert(`Bienvenido ${validUser.name}`);
-                    localStorage.setItem('login_success', JSON.stringify(validUser));
-                    this.$router.push('/inicio');
-                } else {
-                    this.errorMessage = 'Usuario y/o contraseña incorrectos!';
-                }
-            } catch (e) {
-                console.log('Error:', e);
-                this.errorMessage = 'Ocurrió un error. Por favor, intente de nuevo.';
-            }
-        }
-    }*/
+    
 }
 </script>
   
 <style scoped>
-/* Estilos personalizados si es necesario */
 </style>
   

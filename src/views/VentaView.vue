@@ -29,7 +29,7 @@
                 <div class="d-flex gap-4 ">
                     <ul class="list-group d-flex list-group-flush">
                         <li class="list-group-item">
-                            <router-link  to="/inicio" class="d-flex align-items-center p-3">
+                            <router-link to="/inicio" class="d-flex align-items-center p-3">
                                 <i class="fas fa-home"></i>
                                 <span class="ms-3 d-none d-sm-flex">Inicio</span>
                             </router-link>
@@ -41,13 +41,13 @@
                             </router-link>
                         </li>
                         <li class="list-group-item">
-                            <router-link  to="/venta" class="d-flex align-items-center p-3">
+                            <router-link to="/venta" class="d-flex align-items-center p-3">
                                 <i class="fas fa-home"></i>
                                 <span class="ms-3 d-none d-sm-flex">Venta</span>
                             </router-link>
                         </li>
                         <li class="list-group-item">
-                            <router-link  to="/historial" class="d-flex align-items-center p-3">
+                            <router-link to="/historial" class="d-flex align-items-center p-3">
                                 <i class="fas fa-home"></i>
                                 <span class="ms-3 d-none d-sm-flex">Historial</span>
                             </router-link>
@@ -55,25 +55,156 @@
                     </ul>
                 </div>
             </div>
-            <div class="col-10 d-flex align-items-center justify-content-center">
-                <h1>{{ currentUser.id }}</h1>
+            <div class="col-7 d-flex align-items-center justify-content-center">
+                <div class="container-fluid">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Logo</th>
+                                <th>Nombre</th>
+                                <th>Símbolo</th>
+                                <th>Cantidad</th>
+                                <th>Valor en ARS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="coin in monedasConValor" :key="coin.id">
+                                <td><img :src="coin.image" alt="Logo" width="30" height="30"></td>
+                                <td>{{ coin.name }}</td>
+                                <td>{{ coin.symbol }}</td>
+                                <td>{{ coin.quantity }}</td>
+                                <td>{{ coin.totalValue }}</td>
+                                <td><button class="btn btn-sm btn-primary" @click="venderMoneda(coin)">Vender</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="4" class="text-end"><strong>Total ARS:</strong></td>
+                                <td>{{ totalARS }}</td>
 
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <div class="col-3 d-flex justify-content-center align-items-center">
+                <div class="card" style="width: 18rem" v-if="monedaSeleccionada">
+                    <img :src="monedaSeleccionada.image" alt="coin image" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ monedaSeleccionada.name }}</h5>
+                        <p class="card-text">
+                            Símbolo: {{ monedaSeleccionada.symbol }} <br>
+                            Precio: {{ monedaSeleccionada.current_price }} ARS
+                        </p>
+                        <div class="mb-3">
+                            <label for="cantidad" class="form-label">Cantidad a vender</label>
+                            <input type="number" class="form-control" id="cantidad" v-model.number="cantidad" min="0"
+                                max="monedaSeleccionada.quantity">
+                        </div>
+                        <button class="btn btn-danger" @click="venderMonedaConfirmado">Vender</button>
+                    </div>
+                </div>
+                <div v-else>
+                    <p>Selecciona una moneda para ver los detalles aquí</p>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
+    data() {
+        return {
+            coinsData: [],
+            monedas: [],
+            monedasConValor: [],
+            totalARS: 0,
+            monedaSeleccionada: null,
+            cantidad: 0,
+        };
+    },
     computed: {
         currentUser() {
             return this.$store.getters.currentUser;
-        }
+        },
+    },
+    mounted() {
+        this.cargarDatos();
     },
     methods: {
         logout() {
             this.$store.dispatch('logout');
             this.$router.push('/login');
+        },
+        async cargarDatos() {
+            try {
+                const response = await axios.get("https://api.coingecko.com/api/v3/coins/markets?vs_currency=ars");
+                this.coinsData = response.data;
+                this.cargarMonedero();
+            } catch (error) {
+                console.error('Error al obtener los datos de CoinGecko:', error);
+            }
+        },
+        cargarMonedero() {
+            const userId = this.currentUser.id;
+            let monedero = localStorage.getItem(userId);
+
+            if (monedero) {
+                monedero = JSON.parse(monedero);
+                this.monedas = monedero.monedas || {};
+                this.actualizarMonedasConValor();
+            }
+        },
+        actualizarMonedasConValor() {
+            this.monedasConValor = this.coinsData
+                .map(coin => {
+                    const cantidad = this.monedas[coin.id] || 0;
+                    const totalValue = cantidad * coin.current_price;
+                    return {
+                        ...coin,
+                        quantity: cantidad,
+                        totalValue: totalValue.toFixed(4) // Ajusta a 4 decimales
+                    };
+                })
+                .filter(coin => coin.quantity > 0); // Filtra monedas con cantidad > 0
+
+            this.totalARS = this.monedasConValor
+                .reduce((total, coin) => total + parseFloat(coin.totalValue), 0)
+                .toFixed(4);
+        },
+        venderMoneda(coin) {
+            this.monedaSeleccionada = coin;
+            this.cantidad = 0;
+        },
+        venderMonedaConfirmado() {
+            if (this.cantidad < 0.001 || this.cantidad > this.monedaSeleccionada.quantity) {
+                alert('Cantidad inválida. Por favor, ingrese una cantidad válida.');
+                return;
+            }
+
+            const valorVenta = this.cantidad * this.monedaSeleccionada.current_price;
+            // Actualiza la cantidad en el monedero
+            this.monedas[this.monedaSeleccionada.id] -= this.cantidad;
+            if (this.monedas[this.monedaSeleccionada.id] <= 0) {
+                delete this.monedas[this.monedaSeleccionada.id]; // Elimina la moneda si la cantidad llega a 0
+            }
+            // Actualiza el saldo en ARS en el monedero
+            let monedero = JSON.parse(localStorage.getItem(this.currentUser.id)) || {};
+            monedero.ARS = (monedero.ARS || 0) + valorVenta;
+
+            // Guarda los cambios en el local storage
+            localStorage.setItem(this.currentUser.id, JSON.stringify({ monedas: this.monedas, ARS: monedero.ARS }));
+
+            // Actualiza la tabla de monedas con valor
+            this.actualizarMonedasConValor();
+
+            // Resetea la moneda seleccionada
+            this.monedaSeleccionada = null;
+            this.cantidad = 0;
         }
     }
 };
