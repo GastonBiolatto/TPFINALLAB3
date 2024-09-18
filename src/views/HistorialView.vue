@@ -4,7 +4,7 @@
             <div class="col ">
                 <nav class="navbar navbar-expand-lg bg-body-tertiary ">
                     <div class="container-fluid">
-                        <a class="navbar-brand" href="/"><i class="fas fa-home"></i></a>
+                        <router-link class="navbar-brand text-dark" to="/inicio"><i class="fas fa-home"></i></router-link>
                         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                             data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                             aria-expanded="false" aria-label="Toggle navigation">
@@ -13,7 +13,7 @@
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                                 <li class="nav-item">
-                                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                                    <router-link class="nav-link active" aria-current="page" to="/inicio">Home</router-link>
                                 </li>
                             </ul>
                             <form class="d-flex">
