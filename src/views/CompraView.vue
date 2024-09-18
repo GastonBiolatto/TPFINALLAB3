@@ -156,13 +156,13 @@ export default {
 
             monedero = JSON.parse(monedero);
 
-            const totalPrice = this.monedaSeleccionada.current_price * this.cantidad;
+            const totalPrecio = this.monedaSeleccionada.current_price * this.cantidad;
 
-            if (totalPrice > monedero.ARS) {
+            if (totalPrecio > monedero.ARS) {
                 return alert('Saldo insuficiente para la compra.');
             }
 
-            monedero.ARS -= totalPrice;
+            monedero.ARS -= totalPrecio;
 
             if (!monedero.monedas) {
                 monedero.monedas = {};
@@ -173,7 +173,8 @@ export default {
             } else {
                 monedero.monedas[this.monedaSeleccionada.id] = this.cantidad;
             }
-
+            
+            this.historialDeTransaccion(monedero, this.monedaSeleccionada, this.cantidad, totalPrecio, "compra")
             localStorage.setItem(userId, JSON.stringify(monedero));
 
             this.monedaSeleccionada = null;
@@ -181,6 +182,23 @@ export default {
 
             alert('Compra realizada con éxito!');
         },
+
+        historialDeTransaccion(monedero, moneda, cantidad, totalPrecio, tipo) {
+            if (!monedero.historial){
+                monedero.historial = [];
+            }
+            const transaccion ={
+                tipo: tipo,
+                id: moneda.id,
+                nombre: moneda.symbol,
+                cantidad: cantidad,
+                valorARS: totalPrecio.toFixed(2),
+                fecha: new Date().toLocaleString(),
+            }
+            monedero.historial.push(transaccion);
+
+        },
+
         buscarMoneda() {
             if (this.textoBuscado.length > 0) {
                 this.coins = this.coins.filter(coin => coin.name.toLowerCase().includes(this.textoBuscado.toLowerCase()));

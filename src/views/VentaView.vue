@@ -187,25 +187,40 @@ export default {
             }
 
             const valorVenta = this.cantidad * this.monedaSeleccionada.current_price;
-            // Actualiza la cantidad en el monedero
             this.monedas[this.monedaSeleccionada.id] -= this.cantidad;
+
             if (this.monedas[this.monedaSeleccionada.id] <= 0) {
-                delete this.monedas[this.monedaSeleccionada.id]; // Elimina la moneda si la cantidad llega a 0
+                delete this.monedas[this.monedaSeleccionada.id];
             }
-            // Actualiza el saldo en ARS en el monedero
+
             let monedero = JSON.parse(localStorage.getItem(this.currentUser.id)) || {};
+
             monedero.ARS = (monedero.ARS || 0) + valorVenta;
 
-            // Guarda los cambios en el local storage
-            localStorage.setItem(this.currentUser.id, JSON.stringify({ monedas: this.monedas, ARS: monedero.ARS }));
+            this.historialDeTransaccion(monedero, this.monedaSeleccionada, this.cantidad, valorVenta, "venta");
 
-            // Actualiza la tabla de monedas con valor
+            localStorage.setItem(this.currentUser.id, JSON.stringify({ monedas: this.monedas, ARS: monedero.ARS, historial: monedero.historial }));
+
             this.actualizarMonedasConValor();
 
-            // Resetea la moneda seleccionada
             this.monedaSeleccionada = null;
             this.cantidad = 0;
-        }
+        },
+        historialDeTransaccion(monedero, moneda, cantidad, totalPrecio, tipo) {
+            if (!monedero.historial){
+                monedero.historial = [];
+            }
+            const transaccion ={
+                tipo: tipo,
+                id: moneda.id,
+                nombre: moneda.symbol,
+                cantidad: cantidad,
+                valorARS: totalPrecio.toFixed(2),
+                fecha: new Date().toLocaleString(),
+            }
+            monedero.historial.push(transaccion);
+
+        },
     }
 };
 
