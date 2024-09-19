@@ -4,7 +4,6 @@
             <div class="col">
                 <nav class="navbar navbar-expand-lg bg-body-tertiary">
                     <div class="container-fluid">
-                        <router-link class="navbar-brand text-dark" to="/inicio"><i class="fas fa-home"></i></router-link>
                         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                             data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                             aria-expanded="false" aria-label="Toggle navigation">
@@ -12,63 +11,70 @@
                         </button>
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                                <li class="nav-item">
-                                    <router-link class="nav-link active" aria-current="page" to="/inicio">Home</router-link>
+                                <li class="nav-item list-group-item">
+                                    <router-link to="/inicio" class="d-flex align-items-center p-3">
+                                        <i class="fas fa-home"></i>
+                                        <span class="ms-3 d-none d-sm-flex">Inicio</span>
+                                    </router-link>
+                                </li>
+                                <li class="nav-item list-group-item">
+                                    <router-link to="/compra" class="d-flex align-items-center p-3">
+                                        <i class="fas fa-shopping-cart"></i>
+                                        <span class="ms-3 d-none d-sm-flex">Compra</span>
+                                    </router-link>
+                                </li>
+                                <li class="nav-item list-group-item">
+                                    <router-link to="/venta" class="d-flex align-items-center p-3">
+                                        <i class="fas fa-exchange-alt"></i>
+                                        <span class="ms-3 d-none d-sm-flex">Venta</span>
+                                    </router-link>
+                                </li>
+                                <li class="nav-item list-group-item">
+                                    <router-link to="/historial" class="d-flex align-items-center p-3">
+                                        <i class="fas fa-history"></i>
+                                        <span class="ms-3 d-none d-sm-flex">Historial</span>
+                                    </router-link>
                                 </li>
                             </ul>
                             <form class="d-flex">
-                                <p>posee $ {{ monedero.ARS }} <a class="btn" role="button" @click="agregaArs">agregar ars</a></p>
+                                <p>$ {{ monedero.ARS.toFixed(2) }} <a class="btn" role="button"
+                                        @click="agregaArs">agregar ars </a></p>
                             </form>
-                            <button type="button" class="d-flex btn btn-outline-danger" @click="logout">Cerrar sesión</button>
+                            <button type="button" class="d-flex btn btn-outline-danger" @click="logout">Cerrar
+                                sesión</button>
                         </div>
                     </div>
                 </nav>
             </div>
         </div>
         <div class="row todo-alto">
-            <div class="col-2 d-flex align-items-center justify-content-center">
-                <div class="d-flex gap-4">
-                    <ul class="list-group d-flex list-group-flush">
-                        <li class="list-group-item">
-                            <router-link to="/inicio" class="d-flex align-items-center p-3">
-                                <i class="fas fa-home"></i>
-                                <span class="ms-3 d-none d-sm-flex">Inicio</span>
-                            </router-link>
-                        </li>
-                        <li class="list-group-item">
-                            <router-link to="/compra" class="d-flex align-items-center p-3">
-                                <i class="fas fa-shopping-cart"></i>
-                                <span class="ms-3 d-none d-sm-flex">Compra</span>
-                            </router-link>
-                        </li>
-                        <li class="list-group-item">
-                            <router-link to="/venta" class="d-flex align-items-center p-3">
-                                <i class="fas fa-exchange-alt"></i>
-                                <span class="ms-3 d-none d-sm-flex">Venta</span>
-                            </router-link>
-                        </li>
-                        <li class="list-group-item">
-                            <router-link to="/historial" class="d-flex align-items-center p-3">
-                                <i class="fas fa-history"></i>
-                                <span class="ms-3 d-none d-sm-flex">Historial</span>
-                            </router-link>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-10 d-flex align-items-center justify-content-center">
-                <table class="table">
+            <div class="col-12 d-flex align-items-center justify-content-center">
+                <table class="table table-striped table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">Código</th>
-                            <th scope="col">Cripto</th>
-                            <th scope="col">Cantidad</th>
-                            <th scope="col">Valor en pesos</th>
+                            <th>Logo</th>
+                            <th>Nombre</th>
+                            <th>Símbolo</th>
+                            <th>Cantidad</th>
+                            <th>Valor en ARS</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Completar con los datos de las criptomonedas -->
+                        <tr v-for="coin in monedasConValor" :key="coin.id">
+                                <td><img :src="coin.image" alt="Logo" width="30" height="30"></td>
+                                <td>{{ coin.name }}</td>
+                                <td>{{ coin.symbol }}</td>
+                                <td>{{ coin.cantidad }}</td>
+                                <td>{{ coin.totalValue }}</td>
+                            </tr>
                     </tbody>
+                    <tfoot>
+                        <tr>
+                                <td colspan="4" class="text-end"><strong>Total ARS:</strong></td>
+                                <td>{{ totalARS }}</td>
+
+                            </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>
@@ -83,16 +89,20 @@ export default {
         return {
             events: [], // Datos de las criptomonedas desde la API
             usuario: null,
-            monedero: { ARS: 0 },
+            monedero: { ARS: 0, monedas: {} }, // Cambié monedas a un objeto para mapear ids
+
+            monedasConValor: [],
+            totalARS: 0
         };
     },
-
     computed: {
         currentUser() {
             return this.$store.getters.currentUser;
         }
     },
-
+    mounted() {
+        this.cargarDatos();
+    },
     watch: {
         currentUser: {
             handler(newUser) {
@@ -102,23 +112,44 @@ export default {
             immediate: true
         }
     },
-
     methods: {
         logout() {
             this.$store.dispatch('logout');
             this.$router.push('/login');
         },
-
-        async obtenerMonedero() {
-            const userId = this.currentUser ? this.currentUser.id : null;
-            if (!userId) return;
-
-            let monedero = localStorage.getItem(userId);
-            if (monedero) {
-                this.monedero = JSON.parse(monedero);  // Actualiza el estado reactivo
-            } else {
-                this.monedero = { ARS: 0 };
+        async cargarDatos() {
+            try {
+                let response = await axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=ars');
+                this.events = response.data;
+                this.obtenerMonedero();
+            } catch (error) {
+                console.error('Error al obtener los datos de CoinGecko:', error);
             }
+        },
+        async obtenerMonedero() {
+            const userId = this.currentUser.id;
+            let monedero = localStorage.getItem(userId);
+
+            if (monedero) {
+                this.monedero = JSON.parse(monedero); 
+                this.actualizaMonedasConValor();
+            } else {
+                this.monedero = { ARS: 0, monedas: {} }; // Inicializa monedas como un objeto vacío
+            }
+        },
+        actualizaMonedasConValor() {
+            this.monedasConValor = this.events.map(coin => {
+                const cantidad = this.monedero.monedas[coin.id] || 0; // Usa this.monedero.monedas
+                const totalValue = cantidad * coin.current_price;
+                return {
+                    ...coin, 
+                    cantidad, 
+                    totalValue: totalValue.toFixed(4) };
+            })
+            .filter(coin => coin.cantidad > 0);
+            this.totalARS = this.monedasConValor
+            .reduce((total, coin) => total + parseFloat(coin.totalValue), 0)
+            .toFixed(2);
         },
 
         agregaArs() {
@@ -129,23 +160,14 @@ export default {
             if (monedero) {
                 monedero = JSON.parse(monedero);
             } else {
-                monedero = { ARS: 0 };
+                monedero = { ARS: 0, monedas: {} }; // Inicializa monedas como un objeto vacío
             }
             monedero.ARS += 100;
             localStorage.setItem(userId, JSON.stringify(monedero));
             this.monedero = monedero;  // Actualiza el estado reactivo
+            this.actualizaMonedasConValor(); // Actualiza el valor total y la tabla
         },
     },
-
-    async created() {
-        try {
-            let response = await axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=ars');
-            this.events = response.data;
-            this.obtenerMonedero();  // Inicializa monedero al crear el componente
-        } catch (error) {
-            console.error('Error fetching cryptocurrency data:', error);
-        }
-    }
 }
 </script>
 

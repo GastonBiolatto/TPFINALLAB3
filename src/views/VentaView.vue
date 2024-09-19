@@ -2,9 +2,8 @@
     <div class="container-fluid bg-secondary-subtle full-screen-container">
         <div class="row">
             <div class="col ">
-                <nav class="navbar navbar-expand-lg bg-body-tertiary ">
+                <nav class="navbar navbar-expand-lg bg-body-tertiary">
                     <div class="container-fluid">
-                        <router-link class="navbar-brand text-dark" to="/inicio"><i class="fas fa-home"></i></router-link>
                         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                             data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                             aria-expanded="false" aria-label="Toggle navigation">
@@ -12,8 +11,29 @@
                         </button>
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                                <li class="nav-item">
-                                    <router-link class="nav-link active" aria-current="page" to="/inicio">Home</router-link>
+                                <li class="nav-item list-group-item">
+                                    <router-link to="/inicio" class="d-flex align-items-center p-3">
+                                        <i class="fas fa-home"></i>
+                                        <span class="ms-3 d-none d-sm-flex">Inicio</span>
+                                    </router-link>
+                                </li>
+                                <li class="nav-item list-group-item">
+                                    <router-link to="/compra" class="d-flex align-items-center p-3">
+                                        <i class="fas fa-shopping-cart"></i>
+                                        <span class="ms-3 d-none d-sm-flex">Compra</span>
+                                    </router-link>
+                                </li>
+                                <li class="nav-item list-group-item">
+                                    <router-link to="/venta" class="d-flex align-items-center p-3">
+                                        <i class="fas fa-exchange-alt"></i>
+                                        <span class="ms-3 d-none d-sm-flex">Venta</span>
+                                    </router-link>
+                                </li>
+                                <li class="nav-item list-group-item">
+                                    <router-link to="/historial" class="d-flex align-items-center p-3">
+                                        <i class="fas fa-history"></i>
+                                        <span class="ms-3 d-none d-sm-flex">Historial</span>
+                                    </router-link>
                                 </li>
                             </ul>
                             <form class="d-flex">
@@ -25,37 +45,8 @@
             </div>
         </div>
         <div class="row todo-alto">
-            <div class="col-2 d-flex align-items-center justify-content-center">
-                <div class="d-flex gap-4 ">
-                    <ul class="list-group d-flex list-group-flush">
-                        <li class="list-group-item">
-                            <router-link to="/inicio" class="d-flex align-items-center p-3">
-                                <i class="fas fa-home"></i>
-                                <span class="ms-3 d-none d-sm-flex">Inicio</span>
-                            </router-link>
-                        </li>
-                        <li class="list-group-item">
-                            <router-link to="/compra" class="d-flex align-items-center p-3">
-                                <i class="fas fa-home"></i>
-                                <span class="ms-3 d-none d-sm-flex">Compra</span>
-                            </router-link>
-                        </li>
-                        <li class="list-group-item">
-                            <router-link to="/venta" class="d-flex align-items-center p-3">
-                                <i class="fas fa-home"></i>
-                                <span class="ms-3 d-none d-sm-flex">Venta</span>
-                            </router-link>
-                        </li>
-                        <li class="list-group-item">
-                            <router-link to="/historial" class="d-flex align-items-center p-3">
-                                <i class="fas fa-home"></i>
-                                <span class="ms-3 d-none d-sm-flex">Historial</span>
-                            </router-link>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-7 d-flex align-items-center justify-content-center">
+
+            <div class="col-8 d-flex align-items-center justify-content-center">
                 <div class="container-fluid">
                     <table class="table table-striped table-hover">
                         <thead>
@@ -72,7 +63,7 @@
                                 <td><img :src="coin.image" alt="Logo" width="30" height="30"></td>
                                 <td>{{ coin.name }}</td>
                                 <td>{{ coin.symbol }}</td>
-                                <td>{{ coin.quantity }}</td>
+                                <td>{{ coin.cantidad }}</td>
                                 <td>{{ coin.totalValue }}</td>
                                 <td><button class="btn btn-sm btn-primary" @click="venderMoneda(coin)">Vender</button>
                                 </td>
@@ -88,7 +79,7 @@
                     </table>
                 </div>
             </div>
-            <div class="col-3 d-flex justify-content-center align-items-center">
+            <div class="col-4 d-flex justify-content-center align-items-center">
                 <div class="card" style="width: 18rem" v-if="monedaSeleccionada">
                     <img :src="monedaSeleccionada.image" alt="coin image" class="card-img-top">
                     <div class="card-body">
@@ -119,7 +110,7 @@ import axios from 'axios';
 export default {
     data() {
         return {
-            coinsData: [],
+            events: [],
             monedas: [],
             monedasConValor: [],
             totalARS: 0,
@@ -143,7 +134,7 @@ export default {
         async cargarDatos() {
             try {
                 const response = await axios.get("https://api.coingecko.com/api/v3/coins/markets?vs_currency=ars");
-                this.coinsData = response.data;
+                this.events = response.data;
                 this.cargarMonedero();
             } catch (error) {
                 console.error('Error al obtener los datos de CoinGecko:', error);
@@ -160,28 +151,28 @@ export default {
             }
         },
         actualizarMonedasConValor() {
-            this.monedasConValor = this.coinsData
+            this.monedasConValor = this.events
                 .map(coin => {
                     const cantidad = this.monedas[coin.id] || 0;
                     const totalValue = cantidad * coin.current_price;
                     return {
                         ...coin,
-                        quantity: cantidad,
-                        totalValue: totalValue.toFixed(4) // Ajusta a 4 decimales
+                        cantidad: cantidad,
+                        totalValue: totalValue.toFixed(4) 
                     };
                 })
-                .filter(coin => coin.quantity > 0); // Filtra monedas con cantidad > 0
+                .filter(coin => coin.cantidad > 0); 
 
             this.totalARS = this.monedasConValor
                 .reduce((total, coin) => total + parseFloat(coin.totalValue), 0)
-                .toFixed(4);
+                .toFixed(2);
         },
         venderMoneda(coin) {
             this.monedaSeleccionada = coin;
             this.cantidad = 0;
         },
         venderMonedaConfirmado() {
-            if (this.cantidad < 0.001 || this.cantidad > this.monedaSeleccionada.quantity) {
+            if (this.cantidad < 0.001 || this.cantidad > this.monedaSeleccionada.cantidad) {
                 alert('Cantidad inválida. Por favor, ingrese una cantidad válida.');
                 return;
             }
@@ -207,10 +198,10 @@ export default {
             this.cantidad = 0;
         },
         historialDeTransaccion(monedero, moneda, cantidad, totalPrecio, tipo) {
-            if (!monedero.historial){
+            if (!monedero.historial) {
                 monedero.historial = [];
             }
-            const transaccion ={
+            const transaccion = {
                 tipo: tipo,
                 id: moneda.id,
                 nombre: moneda.symbol,
