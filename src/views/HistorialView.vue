@@ -46,9 +46,29 @@
         </div>
         <div class="row todo-alto">
             
-            <div class="col-10 d-flex align-items-center justify-content-center">
-                
-
+            <div class="col-12 d-flex align-items-center justify-content-center">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Nombre</th>
+                            <th>Símbolo</th>
+                            <th>Cantidad</th>
+                            <th>Valor en ARS</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(datos, index) in historial" :key="index.id">
+                                <td>{{ datos.tipo }}</td>
+                                <td>{{ datos.id }}</td>
+                                <td>{{ datos.nombre }}</td>
+                                <td>{{ datos.cantidad }}</td>
+                                <td>{{ datos.valorARS }}</td>
+                                <td>{{ datos.fecha }}</td>
+                            </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -56,6 +76,11 @@
 
 <script>
 export default {
+    data() {
+        return {
+            historial: [],
+        };
+    },
     computed: {
         currentUser() {
             return this.$store.getters.currentUser;
@@ -65,15 +90,29 @@ export default {
         currentUser: {
             handler(newUser) {
                 this.usuario = newUser;
+                this.cargarHistorial();
             },
             immediate: true
         }
+    },
+    mounted() {
+        this.cargarHistorial();
     },
     methods: {
         logout() {
             this.$store.dispatch('logout');
             this.$router.push('/login');
-        }
+        },
+        cargarHistorial() {
+            const userId = this.currentUser.id;
+            let datos = localStorage.getItem(userId);
+
+            if (datos) {
+                datos = JSON.parse(datos);
+                this.historial = datos.historial || [];
+            }
+
+        },
     }
 };
 
